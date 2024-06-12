@@ -1,6 +1,6 @@
 package com.baseapp.baseApplication.student;
 
-import org.apache.el.stream.Optional;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -9,33 +9,50 @@ import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class StudentService {
 
-    private final StudentRepository studentRepository;
+    private StudentRepository studentRepository;
 
-    public StudentService(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
-    public List<Student> getStudents() {
+        public StudentService(StudentRepository studentRepository) {
+            this.studentRepository = studentRepository;
+        }
+
+    public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
 
-    public void addNewStudent(Student student) {
-        Optional<Student> studentByEmail = studentRepository.findStudentByEmail(student.getEmail());
-        if(studentByEmail.isPresent()) {
-            throw new IllegalStateException("Email is taken");
-        }
+    public void saveStudent(Student student) {
         studentRepository.save(student);
     }
 
-    public void deleteStudent(Long StudentId) {
-        studentRepository.findById(StudentId);
 
-        if(studentRepository.existsById(StudentId)) {
-            studentRepository.deleteById(StudentId);
-        } else {
-            throw new IllegalStateException("Student with id " + StudentId + " does not exist");
-        }
+    public Student getStudentById(Long id) {
+        return studentRepository.findById(id).get();
     }
+
+    public void updateStudent(Student stud) {
+            Student student = addToStudent(stud);
+            studentRepository.save(student);
+    }
+
+    private Student addToStudent(Student student) {
+            Student studs = Student.builder()
+                    .id(student.getId())
+                    .name(student.getName())
+                    .address(student.getAddress())
+                    .dob(student.getDob())
+                    .email(student.getEmail())
+                    .gender(student.getGender())
+                    .age(student.getAge())
+                    .build();
+            return studs;
+    }
+
+    public void deleteStudentById(Long id) {
+        studentRepository.deleteById(id);
+    }
+
+
 }

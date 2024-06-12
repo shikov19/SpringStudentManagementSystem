@@ -1,8 +1,8 @@
 package com.baseapp.baseApplication.student;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 
 import java.time.LocalDate;
@@ -10,54 +10,32 @@ import java.time.Period;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-@Table
+@Table(name = "student")
 public class Student {
     @Id
-    @SequenceGenerator(
-            name = "student_sequence",
-            sequenceName = "student_sequence",
-            allocationSize = 1)
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "student_sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Size(min = 2, max = 50)
     private String name;
+    @Size(min = 2, max = 50)
     private String email;
-    private LocalDate dob;
     @Transient
-    private Integer age;
+    private int age;
 
-    public Student() {
-    }
-
-    public Student(Long id, String name, String email, LocalDate dob) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.dob = dob;
-    }
-
-    public Student(String name, String email, LocalDate dob) {
-        this.name = name;
-        this.email = email;
-        this.dob = dob;
-    }
+    private LocalDate dob;
+    @Size(max = 6)
+    private String gender;
+    @Size(min = 2, max = 25)
+    private String address;
 
     public Integer getAge(){
         return Period.between(dob, LocalDate.now()).getYears();
     }
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", dob=" + dob +
-                ", age=" + age +
-                '}';
-    }
 }
 
